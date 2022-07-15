@@ -82,7 +82,7 @@ Finally, we also provide a suite of primitive Actions that underlie the base scr
 
 ## Tool Version Pinning
 
-All Actions that run CumulusCI operations accept two optional parameters, `cumulusci-version` and `sfdx-version`. If these inputs are supplied, the Actions will ensure that the specified versions of the tools are installed.
+All non-primitive Actions that run CumulusCI operations accept two optional parameters, `cumulusci-version` and `sfdx-version`. If these inputs are supplied, the Actions will ensure that the specified versions of the tools are installed.
 
 If the inputs are not populated, the Action will source a default version for each tool from `cumulusci-actions/default-package-versions@main`. Note that we do not pin a tag on `default-package-versions`: the default CumulusCI and SFDX versions may be changed without publishing a new Action tag, provided that the overall behavior of the Action is not altered. We use this flexibility to ensure that we pin stable versions, and reserve the right to roll back the default in case of unexpected regressions.
 
@@ -90,7 +90,7 @@ The CumulusCI Actions **require CumulusCI 3.61.1 or greater**.
 
 ## Authorizing Orgs
 
-All non-primitive Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via `sfdx force:org:display --json --verbose`, and typically are stored in GitHub Secrets.
+All Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via `sfdx force:org:display --json --verbose`, and typically are stored in GitHub Secrets.
 
 Auth URLs are provided to Actions in the inputs `dev-hub-auth-url` and `packaging-org-auth-url`. Internally, every Action uses the `cumulusci-actions/authorize-org` primitive Action, which ingests the auth URL into the SFDX keychain and imports it into CumulusCI.
 
