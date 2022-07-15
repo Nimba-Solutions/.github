@@ -90,7 +90,7 @@ The CumulusCI Actions **require CumulusCI 3.61.1 or greater**.
 
 ## Authorizing Orgs
 
-All Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via `sfdx force:org:display --json --verbose`, and typically are stored in GitHub Secrets.
+All non-primitive Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via `sfdx force:org:display --json --verbose`, and typically are stored in GitHub Secrets.
 
 Auth URLs are provided to Actions in the inputs `dev-hub-auth-url` and `packaging-org-auth-url`. Internally, every Action uses the `cumulusci-actions/authorize-org` primitive Action, which ingests the auth URL into the SFDX keychain and imports it into CumulusCI.
 
