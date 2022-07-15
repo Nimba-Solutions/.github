@@ -86,7 +86,7 @@ All non-primitive Actions that run CumulusCI operations accept two optional para
 
 If the inputs are not populated, the Action will source a default version for each tool from `cumulusci-actions/default-package-versions@main`. Note that we do not pin a tag on `default-package-versions`: the default CumulusCI and SFDX versions may be changed without publishing a new Action tag, provided that the overall behavior of the Action is not altered. We use this flexibility to ensure that we pin stable versions, and reserve the right to roll back the default in case of unexpected regressions.
 
-The CumulusCI Actions **require CumulusCI 3.61.1 or greater**.
+The CumulusCI Actions **require CumulusCI 3.61.1 or greater** for any operation that references a packaging org.
 
 ## Authorizing Orgs
 
