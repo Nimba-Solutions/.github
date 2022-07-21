@@ -91,14 +91,30 @@ If the inputs are not populated, the Action will source a default version for ea
 
 The Cumulus Suite Actions **require CumulusCI 3.61.1 or greater** for any operation that references a packaging org.
 
-## Authorizing Orgs
+## Environment Setup and Org Authorization
 
-All Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via `sfdx force:org:display --json --verbose`, and typically are stored in GitHub Secrets.
+All Actions that interact with persistent orgs authorize those orgs using SFDX Auth URLs. These URLs are obtained via by first authorizing an org to the CLI:
+
+`sfdx auth:web:login -a packaging`
+
+and then retrieving the auth URL from the JSON output of the command
+
+`sfdx force:org:display --json --verbose` 
+
+under the key `sfdxAuthUrl` under `result`. 
+
+If you have `jq` installed, you can do `sfdx force:org:display -u packaging-gh --json --verbose | jq -r .result.sfdxAuthUrl`.
+
+This auth URL should be stored in GitHub Secrets. As shown in the standard workflows, we recommend creating a GitHub Environment called `packaging` and adding the auth URL as a secret under that environment. You can then configure required approvers for the environment, as well as branch limitations, to ensure that rogue Actions cannot disclose this sensitive credential.
 
 Auth URLs are provided to Actions in the inputs `dev-hub-auth-url` and `packaging-org-auth-url`. Internally, every Action uses the `cumulus-actions/authorize-org` primitive Action, which ingests the auth URL into the SFDX keychain and imports it into CumulusCI.
 
-## Recommended Environment Configuration
+If you'd like 1GP beta builds to run automatically on commits to `main`, without individual approval, but require approvals on production releases, you can set up two environments: `packaging` and `packaging-prod`. Configure required approvers on `packaging-prod`, but not on `packaging`, and set the auth URL secret for your packaging org on both environments. Ensure that `packaging` is configured to build only on commits to `main`, and that you're using branch protection to require review before merge to `main`, to guard against disclosure of the secret.
+
+For 2GP, you may wish to use two different integration users against your Dev Hub: one with a Limited Access license permissioned to only be able to create scratch orgs, which is safe to use in any build, and a separate user permissioned to execute package uploads. You can secure the auth URL for the latter using environment configuration.
+
+## Concurrency Protection
 
 All Actions other than package uploads are safe to run in parallel, because they run against independent scratch orgs. Package uploads, however, are generally serialized (other than per-commit test package versions). 
 
-In GitHub Actions, concurrency protection takes place at the level of the workflow, not the individual Action. We recommend following the pattern shown in `cumulusci/standard-workflows` by ensuring that package-upload Actions are run in a job with the key `concurrency` set to `packaging`. This ensures that GitHub Actions serializes execution of jobs against the packaging org.
+In GitHub Actions, concurrency protection takes place at the level of the workflow, not the individual Action. We recommend following the pattern shown in `cumulusci/standard-workflows` by ensuring that package-upload Actions are run in a job with the key `concurrency` set to `packaging`. This ensures that GitHub Actions serializes execution of jobs against the packaging org. Note that this concurrency setup is independent of your decisions around environment setup (described above).
