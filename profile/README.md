@@ -31,12 +31,15 @@ on:
 jobs:
   feature-test:
     name: "Feature Test"
-    uses: cumulusci-actions/standard-workflows/.github/workflows/feature-2gp.yml@v1
+    # Replace this URL with your cloned repo.
+    uses: cumulusci-actions/standard-workflows/.github/workflows/feature-2gp.yml@main
     secrets:
       dev-hub-auth-url: ${{ secrets.DEV_HUB_AUTH_URL }}
 ```
 
 Tailor the triggers to the specific needs of your project, and make sure that the named secret matches the secret you created to store your Dev Hub auth URL.
+
+You can choose whether or not to pin to a version tag in your cloned `standard-workflows` repo. In many use cases, it makes the most sense _not_ to do so, as this allows you to use your `standard-workflows` repo as a central control console to instantly update workflow definitions across repos.
 
 ### Job-Based Actions
 
@@ -62,9 +65,9 @@ For examples of how to apply these actions, review the standard workflows. Each 
 
 All job-based Actions that create scratch orgs consume the `cumulusci/execute-flow-scratch` or `cumulusci/execute-robot-flow-scratch` base scratch org Actions. 
 
-`cumulusci/execute-flow-scratch` creates a scratch org on a given configuration (`org-name`), runs a given flow (`flow-name`) on that org, and then disposes the org. Optionally, it extracts information from the job log that matches a regex (`commit-status-regex`) and stores that information as the description on a new commit status (`commit-status-name`), prefixed by `commit-status-description-prefix`. This optional feature is used to support jobs that create per-commit package versions.
+`cumulusci/run-flow-scratch` creates a scratch org on a given configuration (`org-name`), runs a given flow (`flow-name`) on that org, and then disposes the org. Optionally, it extracts information from the job log that matches a regex (`commit-status-regex`) and stores that information as the description on a new commit status (`commit-status-name`), prefixed by `commit-status-description-prefix`. This optional feature is used to support jobs that create per-commit package versions.
 
-`cumulusci/execute-robot-flow-scratch` accepts the parameters `dev-hub-auth-url`, `org-name`, and `setup-flow`. The latter two options are required. The Action will create an org from the configuration `org-name` and execute `setup-flow` against it before running Robot Framework tests. It stores Robot results as an artifact.
+`cumulusci/run-robot-flow-scratch` accepts the parameters `dev-hub-auth-url`, `org-name`, and `setup-flow`. The latter two options are required. The Action will create an org from the configuration `org-name` and execute `setup-flow` against it before running Robot Framework tests. It stores Robot results as an artifact.
 
 ### Primitive Actions
 
